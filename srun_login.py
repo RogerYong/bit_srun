@@ -112,7 +112,7 @@ def srun_login(username, password=None, action='login'):
                 "acid": get_data['ac_id'],
                 "enc_ver": enc
             }
-        elif get_data['action'] == 'logout':
+        else:
             x_encode_json = {
                 "username": get_data['username'],
                 "ip": get_data['ip'],
@@ -158,7 +158,6 @@ def srun_login(username, password=None, action='login'):
     if action not in ['login', 'logout']:
         print('action must be "login" or "logout".')
         return
-
     enc = "srun_bx1"
     n = 200
     type_ = 1
@@ -205,10 +204,10 @@ def srun_login(username, password=None, action='login'):
         # get_data['password'] = pwd_hmd5(get_data['password'], token) # srun's bug
 
     get_data['chksum'] = checksum(get_data, token)
-    # print('get data: %s' % json.dumps(get_data, indent=4))
 
+    # print('get data: %s' % json.dumps(get_data, indent=4))
     res = get_json(srun_portal_url, get_data)
-    #print("Server response: %s" % json.dumps(res, indent=4))
+    # print("Server response: %s" % json.dumps(res, indent=4))
 
     if res['error'] == 'ok':
         print('%s success.' % action)
