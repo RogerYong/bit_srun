@@ -7,7 +7,7 @@ import hmac
 import json
 import os
 import time
-
+import re
 import requests
 
 
@@ -163,13 +163,15 @@ def srun_login(username, password=None, action='login'):
     type_ = 1
     get_challenge_url = "http://10.0.0.55/cgi-bin/get_challenge"
     srun_portal_url = "http://10.0.0.55/cgi-bin/srun_portal"
-
+    url = 'http://10.0.0.55'
+    r = requests.get(url)
+    ac_id=re.findall(r'index_(\d*).html',r.url)[0]
     if action == 'login':
         get_data = {
             "action": action,
             "username": username,
             "password": password,
-            "ac_id": '8',
+            "ac_id": ac_id,
             "ip": '',
             "info": '',
             "chksum": '',
@@ -181,7 +183,7 @@ def srun_login(username, password=None, action='login'):
             "action": action,
             "username": username,
             # "password": password, # logout,
-            "ac_id": '8',
+            "ac_id": ac_id,
             "ip": '',
             "info": '',
             "chksum": '',
