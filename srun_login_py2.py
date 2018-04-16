@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*-coding:utf-8-*-
 
 import base64
@@ -8,18 +8,31 @@ import json
 import os
 import time
 import re
-import requests
+import urllib, urllib2
 
+class hrequests:
+    def __init__(self,content='',url=''):
+        self.content=content
+        self.url=url
+    def get(self,url,params=None):
+        if type(params)==dict:
+            params=urllib.urlencode(params)
+        request = urllib2.Request(url=url, data=params)
+        response =urllib2.urlopen(request)
+        #encoding = response.headers['content-type'].split('charset=')[-1]
+        return hrequests(response.read(),response.geturl())
+
+requests=hrequests()
 
 def char_code_at(stri, index):
     return 0 if index >= len(stri) else ord(stri[index])
 
 
-def xencode(msg: str, key):
+def xencode(msg, key):
     '''
     xEncode
     '''
-    def s(a: str, b: bool):
+    def s(a, b):
         c = len(a)
         v = []
         for i in range(0, c, 4):
@@ -123,15 +136,14 @@ def srun_login(username, password=None, action='login'):
         x_encode_str = json.dumps(x_encode_json, separators=(',', ':'))
         x_encode_key = token
         x_encode_res = xencode(x_encode_str, x_encode_key)
-        # print("x_encode('%s', '%s')" % (x_encode_str, x_encode_key))
-        # print('x_encode_res(len: %s): %s' % (len(x_encode_res), x_encode_res))
-        # print("x_encode_res unicode:", [ord(s) for s in x_encode_res])
+        #print "x_encode('%s', '%s')" % (x_encode_str, x_encode_key) 
+        #print 'x_encode_res(len: %s): %s' % (len(x_encode_res), x_encode_res) 
+        #print "x_encode_res unicode:", [ord(s) for s in x_encode_res] 
 
         # base64_encode
         mapping = dict(zip("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
                            "LVoJPiCN2R8G90yg+hmFHuacZ1OWMnrsSTXkYpUq/3dlbfKwv6xztjI7DeBE45QA="))
-        b64_res = base64.b64encode(
-            bytes([ord(s) for s in x_encode_res])).decode()
+        b64_res = base64.b64encode(x_encode_res)
         base64_encode_res = ''.join([mapping[b] for b in b64_res])
         # print('base64 encode res(len: %s): %s' % (len(base64_encode_res), base64_encode_res))
 
@@ -140,7 +152,7 @@ def srun_login(username, password=None, action='login'):
     def pwd_hmd5(password, token):
         hmac_key = token.encode('utf-8')
         hmac_msg = password.encode('utf-8')
-        hmd5 = hmac.new(hmac_key, hmac_msg, digestmod='MD5').hexdigest()
+        hmd5 = hmac.new(hmac_key, hmac_msg, digestmod=hashlib.md5).hexdigest()
         # print(hmd5)
         return '{MD5}' + hmd5
 
@@ -194,13 +206,12 @@ def srun_login(username, password=None, action='login'):
     challenge_json = get_json(
         get_challenge_url, {"username": get_data['username']})
     if challenge_json['res'] != "ok":
-        print('Error getting challenge. %s failed.' % action)
-        print('Server response:\n%s' % json.dumps(challenge_json, indent=4))
+        print 'Error getting challenge. %s failed.' % action 
+        print 'Server response:\n%s' % json.dumps(challenge_json, indent=4) 
         return
     token = challenge_json['challenge']
     get_data['ip'] = challenge_json['client_ip']
     get_data['info'] = data_info(get_data, token)
-
     if action == 'login':
         get_data['password'] = pwd_hmd5('', token)
         # get_data['password'] = pwd_hmd5(get_data['password'], token) # srun's bug
@@ -212,16 +223,15 @@ def srun_login(username, password=None, action='login'):
     # print("Server response: %s" % json.dumps(res, indent=4))
 
     if res['error'] == 'ok':
-        print('%s success.' % action)
+        print '%s success.' % action 
     else:
-        print("%s failed.\n%s %s" % (action, res['error'], res['error_msg']))
-
+        print "%s failed.\n%s %s" % (action, res['error'], res['error_msg'])
     return res
-
 
 if __name__ == "__main__":
     username = "username"
     password = "password"
-
     srun_login(username, password)
-    srun_login(username, action="logout")
+    #srun_login(username, action="logout")
+
+
