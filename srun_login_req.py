@@ -94,12 +94,10 @@ def get_json(url, data):
 
 def srun_login(username, password=None, action='login'):
     '''srun login and logout
-
     Args:
         username: username
-        passwprd: password
+        password: password
         action: 'login' or 'logout'
-
     Returns:
         a json object.
     '''
@@ -163,9 +161,16 @@ def srun_login(username, password=None, action='login'):
     type_ = 1
     get_challenge_url = "http://10.0.0.55/cgi-bin/get_challenge"
     srun_portal_url = "http://10.0.0.55/cgi-bin/srun_portal"
-    url = 'http://10.0.0.53'
-    r = requests.get(url)
-    ac_id=re.findall(r'index_(\d*).html',r.url)[0]
+    url = 'http://detectportal.firefox.com/success.txt'
+    #Check if Redirect, when not, set to default
+    try:
+        r = requests.get(url, timeout=0.01)
+        ac_id=re.findall(r'index_(\d*).html',r.url)[0]
+    except requests.exceptions.Timeout:
+            ac_id=1
+    if not ac_id:
+        ac_id=1
+    ac_id=str(ac_id)
     if action == 'login':
         get_data = {
             "action": action,
@@ -219,9 +224,9 @@ def srun_login(username, password=None, action='login'):
     return res
 
 
-if __name__ == "__main__":
-    username = "username"
-    password = "password"
-
-    srun_login(username, password)
-    #srun_login(username, action="logout")
+#if __name__ == "__main__":
+#    username = "username"
+#    password = "password"
+#
+#    srun_login(username, password)
+#srun_login(username, action="logout")
