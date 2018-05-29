@@ -224,9 +224,9 @@ def srun_login(username, password=None, action='login'):
     return res
 
 
-#if __name__ == "__main__":
-#    username = "username"
-#    password = "password"
-#
-#    srun_login(username, password)
+if __name__ == "__main__":
+    username = "username"
+    password = "password"
+
+    srun_login(username, password)
 #srun_login(username, action="logout")
