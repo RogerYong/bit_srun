@@ -163,7 +163,7 @@ def srun_login(username, password=None, action='login'):
     type_ = 1
     get_challenge_url = "http://10.0.0.55/cgi-bin/get_challenge"
     srun_portal_url = "http://10.0.0.55/cgi-bin/srun_portal"
-    url = 'http://10.0.0.55'
+    url = 'http://10.0.0.53'
     r = requests.get(url)
     ac_id=re.findall(r'index_(\d*).html',r.url)[0]
     if action == 'login':
