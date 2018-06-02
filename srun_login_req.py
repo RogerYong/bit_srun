@@ -164,7 +164,7 @@ def srun_login(username, password=None, action='login'):
     url = 'http://detectportal.firefox.com/success.txt'
     #Check if Redirect, when not, set to default
     try:
-        r = requests.get(url, timeout=0.01)
+        r = requests.get(url, timeout=0.1)
         ac_id=re.findall(r'index_(\d*).html',r.url)[0]
     except requests.exceptions.Timeout:
             ac_id=1
